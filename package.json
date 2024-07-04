@@ -1,0 +1,23 @@
+{
+  "name": "form-func",
+  "version": "1.0.0",
+  "description": "",
+  "main": "create-contact.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shawn-ettrics/hox-contact.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shawn-ettrics/hox-contact/issues"
+  },
+  "homepage": "https://github.com/shawn-ettrics/hox-contact#readme",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
