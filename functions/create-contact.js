@@ -14,9 +14,12 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    console.log('Event Body:', event.body);
     const fetch = await import('node-fetch').then(mod => mod.default);
 
     const { "first-name": firstName, "last-name": lastName, email, phone, interest, message, label_names } = JSON.parse(event.body);
+
+    console.log('Parsed Data:', { firstName, lastName, email, phone, interest, message, label_names });
 
     const response = await fetch('https://api.apollo.io/v1/contacts', {
       method: 'POST',
@@ -38,6 +41,7 @@ exports.handler = async (event, context) => {
     });
 
     const data = await response.json();
+    console.log('Apollo Response:', data);
 
     return {
       statusCode: 200,
@@ -48,6 +52,7 @@ exports.handler = async (event, context) => {
       body: JSON.stringify(data)
     };
   } catch (error) {
+    console.error('Error:', error.message);
     return {
       statusCode: 500,
       headers: {
