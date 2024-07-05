@@ -40,7 +40,11 @@ exports.handler = async (event, context) => {
       })
     });
 
-    const data = await response.json();
+    const text = await response.text();
+    console.log('Raw Apollo Response:', text);
+
+    // Attempt to parse the response as JSON
+    const data = JSON.parse(text);
     console.log('Apollo Response:', data);
 
     return {
