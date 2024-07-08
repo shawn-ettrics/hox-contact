@@ -1,50 +1,54 @@
-const fetch = require('node-fetch');
+// Create the Netlify function
+const fetch = require("node-fetch");
 
-exports.handler = async function(event, context) {
+exports.handler = async (event) => {
   try {
-    const data = JSON.parse(event.body);
-    const contactData = {
-      first_name: data.firstName,
-      last_name: data.lastName,
-      email: data.email,
-      phone: data.phone,
-      organization_name: data.organizationName,
-      label_names: data.label_names,
-      typed_custom_fields: {
-        "YOUR_CUSTOM_FIELD_ID": data.message // Replace YOUR_CUSTOM_FIELD_ID with the actual custom field ID
-      }
-    };
+    const { firstName, lastName, email, phone, organizationName, label_names, message } = JSON.parse(event.body);
 
-    const response = await fetch('https://api.apollo.io/v1/contacts', {
-      method: 'POST',
+    // Apollo API key and custom field ID
+    const apiKey = "F1ylxgjzNqFcVmrxp7XNWQ";
+    const customFieldId = "668c2a9462dd94078939da01"; // ID for webform_message
+
+    const response = await fetch("https://api.apollo.io/v1/contacts", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
-        'X-Api-Key': 'YOUR_API_KEY'
+        "Content-Type": "application/json",
+        "X-Api-Key": apiKey
       },
-      body: JSON.stringify(contactData)
+      body: JSON.stringify({
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        phone: phone,
+        organization_name: organizationName,
+        label_names: label_names,
+        typed_custom_fields: {
+          [customFieldId]: message
+        }
+      })
     });
 
-    const result = await response.json();
+    const data = await response.json();
 
-    if (response.ok) {
-      console.log('Apollo Response:', result);
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ success: true, message: 'Contact created successfully!' })
-      };
-    } else {
-      console.error('Error creating contact:', result);
+    // Log Apollo response
+    console.log("Apollo Response:", JSON.stringify(data));
+
+    if (!response.ok) {
       return {
         statusCode: response.status,
-        body: JSON.stringify({ success: false, message: result.message || 'Error creating contact' })
+        body: JSON.stringify({ message: data.message || "Failed to create contact" })
       };
     }
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: "Contact created successfully", data })
+    };
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error("Unexpected error: ", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ success: false, message: 'Internal Server Error' })
+      body: JSON.stringify({ message: "Internal Server Error", error: error.message })
     };
   }
 };
