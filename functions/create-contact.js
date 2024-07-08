@@ -17,9 +17,9 @@ exports.handler = async (event, context) => {
         console.log('Event Body:', event.body);
         const fetch = await import('node-fetch').then(mod => mod.default);
 
-        const { "first-name": firstName, "last-name": lastName, email, phone, organization, message, label_names } = JSON.parse(event.body);
+        const { "first-name": firstName, "last-name": lastName, email, phone, organization: organizationName, label_names } = JSON.parse(event.body);
 
-        console.log('Parsed Data:', { firstName, lastName, email, phone, organization, message, label_names });
+        console.log('Parsed Data:', { firstName, lastName, email, phone, organizationName, label_names });
 
         const response = await fetch('https://api.apollo.io/v1/contacts', {
             method: 'POST',
@@ -33,10 +33,7 @@ exports.handler = async (event, context) => {
                 last_name: lastName,
                 email,
                 phone,
-                custom_fields: {
-                    organization, // Updated field
-                    message
-                },
+                organization_name: organizationName, // Updated field
                 label_names
             })
         });
