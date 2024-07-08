@@ -1,14 +1,16 @@
 const fetch = require('node-fetch');
 
-// Manually set this to the current timestamp at the time of deployment
-const deploymentTimestamp = '4:17pm';  // Set this manually
-
 exports.handler = async (event) => {
+  const deploymentTimestamp = "4:28pm";
   const executionTimestamp = new Date().toISOString();
+
   console.log("Deployment Timestamp:", deploymentTimestamp);
   console.log("Execution Timestamp:", executionTimestamp);
 
   try {
+    console.log("Event headers:", event.headers);
+    console.log("Event body:", event.body);
+
     const { firstName, lastName, email, phone, organizationName, label_names, message } = JSON.parse(event.body);
 
     const contactData = {
@@ -31,29 +33,25 @@ exports.handler = async (event) => {
       "X-Api-Key": apiKey
     };
 
+    console.log("Sending request to Apollo API:", url);
+    console.log("Request headers:", headers);
+    console.log("Request body:", contactData);
+
     const response = await fetch(url, {
       method: "POST",
       headers: headers,
       body: JSON.stringify(contactData)
     });
 
-    const rawResponseText = await response.text(); // Get raw response text
-    console.log("Raw Apollo Response:", rawResponseText); // Log raw response text
+    const rawResponseText = await response.text();
+    console.log("Raw Apollo Response:", rawResponseText);
 
     let data;
     try {
-      data = JSON.parse(rawResponseText); // Attempt to parse the raw response text
-    } catch (parseError) {
-      console.error("JSON parse error:", parseError.message); // Log any JSON parse errors
-      return {
-        statusCode: 500,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization"
-        },
-        body: JSON.stringify({ success: false, error: "Error parsing response from Apollo" })
-      };
+      data = JSON.parse(rawResponseText);
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
+      throw new Error("Invalid JSON response");
     }
 
     return {
@@ -66,7 +64,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({ success: true, data })
     };
   } catch (error) {
-    console.error("Error:", error.message); // Log any errors
+    console.error("Error:", error);
 
     return {
       statusCode: 500,
