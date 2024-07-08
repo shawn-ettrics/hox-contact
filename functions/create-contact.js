@@ -1,11 +1,6 @@
 const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
-  const deploymentTimestamp = "4:28pm";
-  const executionTimestamp = new Date().toISOString();
-
-  console.log("Deployment Timestamp:", deploymentTimestamp);
-  console.log("Execution Timestamp:", executionTimestamp);
 
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -19,8 +14,6 @@ exports.handler = async (event) => {
   }
 
   try {
-    console.log("Event headers:", event.headers);
-    console.log("Event body:", event.body);
 
     if (!event.body) {
       throw new Error("Request body is empty");
@@ -47,10 +40,6 @@ exports.handler = async (event) => {
       "Cache-Control": "no-cache",
       "X-Api-Key": apiKey
     };
-
-    console.log("Sending request to Apollo API:", url);
-    console.log("Request headers:", headers);
-    console.log("Request body:", contactData);
 
     const response = await fetch(url, {
       method: "POST",
