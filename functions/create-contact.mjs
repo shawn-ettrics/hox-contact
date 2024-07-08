@@ -26,7 +26,10 @@ export async function handler(event, context) {
         body: JSON.stringify(contactPayload)
       });
   
-      const result = await response.json();
+      const text = await response.text(); // Get the raw response text
+      console.log('Raw Apollo Response:', text); // Log the raw response
+  
+      const result = JSON.parse(text); // Parse the response as JSON
   
       return {
         statusCode: 200,
@@ -39,3 +42,4 @@ export async function handler(event, context) {
       };
     }
   }
+  
