@@ -1,6 +1,13 @@
 const fetch = require('node-fetch');
 
+// Manually set this to the current timestamp at the time of deployment
+const deploymentTimestamp = '4:17pm';  // Set this manually
+
 exports.handler = async (event) => {
+  const executionTimestamp = new Date().toISOString();
+  console.log("Deployment Timestamp:", deploymentTimestamp);
+  console.log("Execution Timestamp:", executionTimestamp);
+
   try {
     const { firstName, lastName, email, phone, organizationName, label_names, message } = JSON.parse(event.body);
 
@@ -33,31 +40,33 @@ exports.handler = async (event) => {
     const rawResponseText = await response.text(); // Get raw response text
     console.log("Raw Apollo Response:", rawResponseText); // Log raw response text
 
+    let data;
     try {
-      const data = JSON.parse(rawResponseText); // Parse the raw response text
+      data = JSON.parse(rawResponseText); // Attempt to parse the raw response text
+    } catch (parseError) {
+      console.error("JSON parse error:", parseError.message); // Log any JSON parse errors
       return {
-        statusCode: 200,
+        statusCode: 500,
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type, Authorization"
         },
-        body: JSON.stringify({ success: true, data })
-      };
-    } catch (jsonParseError) {
-      console.error("JSON Parse Error:", jsonParseError); // Log JSON parse error
-      return {
-        statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization"
-        },
-        body: JSON.stringify({ success: true, rawResponse: rawResponseText }) // Return raw response if parsing fails
+        body: JSON.stringify({ success: false, error: "Error parsing response from Apollo" })
       };
     }
+
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      },
+      body: JSON.stringify({ success: true, data })
+    };
   } catch (error) {
-    console.error("Error:", error); // Log any errors
+    console.error("Error:", error.message); // Log any errors
 
     return {
       statusCode: 500,
