@@ -1,6 +1,6 @@
-import fetch from 'node-fetch';
+const fetch = require('node-fetch');
 
-export const handler = async (event) => {
+exports.handler = async (event) => {
   try {
     const { firstName, lastName, email, phone, organizationName, label_names, message } = JSON.parse(event.body);
 
@@ -33,15 +33,29 @@ export const handler = async (event) => {
     const rawResponseText = await response.text(); // Get raw response text
     console.log("Raw Apollo Response:", rawResponseText); // Log raw response text
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization"
-      },
-      body: JSON.stringify({ success: true, rawResponse: rawResponseText })
-    };
+    try {
+      const data = JSON.parse(rawResponseText); // Parse the raw response text
+      return {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        },
+        body: JSON.stringify({ success: true, data })
+      };
+    } catch (jsonParseError) {
+      console.error("JSON Parse Error:", jsonParseError); // Log JSON parse error
+      return {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        },
+        body: JSON.stringify({ success: true, rawResponse: rawResponseText }) // Return raw response if parsing fails
+      };
+    }
   } catch (error) {
     console.error("Error:", error); // Log any errors
 
