@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", function() {
             email: formData.get('email'),
             phone: formData.get('phone'),
             "organization_name": formData.get('organization'), // Ensure this matches the correct form field name
-            label_names: [labelName]
+            label_names: [labelName],
+            message: formData.get('message') // Include the message field
         };
 
         fetch("https://hox-create-contact.netlify.app/.netlify/functions/create-contact", {

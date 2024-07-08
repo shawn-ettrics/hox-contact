@@ -17,9 +17,9 @@ exports.handler = async (event, context) => {
         console.log('Event Body:', event.body);
         const fetch = await import('node-fetch').then(mod => mod.default);
 
-        const { "first-name": firstName, "last-name": lastName, email, phone, "organization_name": organizationName, label_names } = JSON.parse(event.body);
+        const { "first-name": firstName, "last-name": lastName, email, phone, "organization_name": organizationName, label_names, message } = JSON.parse(event.body);
 
-        console.log('Parsed Data:', { firstName, lastName, email, phone, organizationName, label_names });
+        console.log('Parsed Data:', { firstName, lastName, email, phone, organizationName, label_names, message });
 
         const response = await fetch('https://api.apollo.io/v1/contacts', {
             method: 'POST',
@@ -33,8 +33,9 @@ exports.handler = async (event, context) => {
                 last_name: lastName,
                 email,
                 phone,
-                organization_name: organizationName, 
-                label_names
+                organization_name: organizationName,
+                label_names,
+                message // Attempt to include the message field
             })
         });
 
