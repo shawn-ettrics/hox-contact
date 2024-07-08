@@ -1,67 +1,50 @@
-const APOLLO_API_KEY = "F1ylxgjzNqFcVmrxp7XNWQ";
+const fetch = require('node-fetch');
 
 exports.handler = async (event, context) => {
-    if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type',
-            },
-            body: ''
-        };
+  try {
+    const data = JSON.parse(event.body);
+    console.log('Event Body:', event.body);
+    console.log('Parsed Data:', data);
+
+    // Create the contact with the custom field
+    const response = await fetch('https://api.apollo.io/v1/contacts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'X-Api-Key': process.env.APOLLO_API_KEY
+      },
+      body: JSON.stringify({
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        organization_name: data.organizationName,
+        label_names: data.label_names,
+        typed_custom_fields: {
+          webform_message: data.message // using the custom field created
+        }
+      })
+    });
+
+    const result = await response.json();
+    console.log('Raw Apollo Response:', result);
+
+    if (response.ok) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ success: true })
+      };
+    } else {
+      return {
+        statusCode: response.status,
+        body: JSON.stringify({ success: false, message: result.message })
+      };
     }
-
-    try {
-        console.log('Event Body:', event.body);
-        const fetch = await import('node-fetch').then(mod => mod.default);
-
-        const { "first-name": firstName, "last-name": lastName, email, phone, "organization_name": organizationName, label_names, message } = JSON.parse(event.body);
-
-        console.log('Parsed Data:', { firstName, lastName, email, phone, organizationName, label_names, message });
-
-        const response = await fetch('https://api.apollo.io/v1/contacts', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache',
-                'X-Api-Key': APOLLO_API_KEY
-            },
-            body: JSON.stringify({
-                first_name: firstName,
-                last_name: lastName,
-                email,
-                phone,
-                organization_name: organizationName,
-                label_names,
-                message // Attempt to include the message field
-            })
-        });
-
-        const text = await response.text();
-        console.log('Raw Apollo Response:', text);
-
-        const data = JSON.parse(text);
-        console.log('Apollo Response:', data);
-
-        return {
-            statusCode: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type',
-            },
-            body: JSON.stringify(data)
-        };
-    } catch (error) {
-        console.error('Error:', error.message);
-        return {
-            statusCode: 500,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type',
-            },
-            body: JSON.stringify({ error: error.message })
-        };
-    }
+  } catch (error) {
+    console.error('Error:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ success: false, message: 'Internal Server Error' })
+    };
+  }
 };
