@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", function() {
         "last-name": formData.get('last-name'),
         email: formData.get('email'),
         phone: formData.get('phone'),
-        organizationName: formData.get('organization'), // updated to match the new form field
-        message: formData.get('message'), // ensure message field is included
+        organizationName: formData.get('organization'),
+        message: formData.get('message'), 
         label_names: [labelName]
       };
   
