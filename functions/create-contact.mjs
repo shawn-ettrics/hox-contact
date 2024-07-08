@@ -33,22 +33,6 @@ export const handler = async (event) => {
     const rawResponseText = await response.text(); // Get raw response text
     console.log("Raw Apollo Response:", rawResponseText); // Log raw response text
 
-    let data;
-    try {
-      data = JSON.parse(rawResponseText); // Attempt to parse the raw response text
-    } catch (parseError) {
-      console.error("JSON Parse Error:", parseError); // Log JSON parsing error
-      return {
-        statusCode: 500,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization"
-        },
-        body: JSON.stringify({ success: false, error: "Failed to parse JSON response from Apollo" })
-      };
-    }
-
     return {
       statusCode: 200,
       headers: {
@@ -56,7 +40,7 @@ export const handler = async (event) => {
         "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization"
       },
-      body: JSON.stringify({ success: true, data })
+      body: JSON.stringify({ success: true, rawResponse: rawResponseText })
     };
   } catch (error) {
     console.error("Error:", error); // Log any errors
