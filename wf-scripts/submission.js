@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
+    // Function to handle form submission
     function handleFormSubmission(event, labelName) {
       event.preventDefault();
   
@@ -9,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "last-name": formData.get('last-name'),
         email: formData.get('email'),
         phone: formData.get('phone'),
-        organization_name: formData.get('organization'),
+        organization: formData.get('organization'),
         message: formData.get('message'),
         label_names: [labelName]
       };
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (result.success) {
           alert("Contact created successfully!");
         } else {
-          alert("Error: " + result.message);
+          alert("Error: " + result.error);
         }
       })
       .catch(error => {
@@ -35,9 +36,11 @@ document.addEventListener("DOMContentLoaded", function() {
       });
     }
   
+    // Get the forms
     const investorForm = document.getElementById("wf-form-Investor-inquiry");
     const alphaUsageForm = document.getElementById("wf-form-Alpha-usage");
   
+    // Add event listeners to the forms
     if (investorForm) {
       investorForm.addEventListener("submit", function(event) {
         handleFormSubmission(event, "investor_inquiry");
@@ -49,5 +52,4 @@ document.addEventListener("DOMContentLoaded", function() {
         handleFormSubmission(event, "alpha_usage");
       });
     }
-  });
-  
+});
