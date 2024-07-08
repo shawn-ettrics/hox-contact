@@ -1,82 +1,61 @@
 import fetch from 'node-fetch';
 
-exports.handler = async (event, context) => {
-  try {
-    const data = JSON.parse(event.body);
+export const handler = async (event) => {
+  const { firstName, lastName, email, phone, organizationName, label_names } = JSON.parse(event.body);
 
-    const apolloResponse = await fetch('https://api.apollo.io/v1/contacts', {
+  const requestBody = {
+    first_name: firstName,
+    last_name: lastName,
+    email: email,
+    phone: phone,
+    organization_name: organizationName,
+    label_names: label_names,
+  };
+
+  try {
+    const response = await fetch('https://api.apollo.io/v1/contacts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
-        'X-Api-Key': 'your-new-api-key-here'
+        'X-Api-Key': 'kyW8x396g0wn6U2ka72pRA', // Replace with your actual API key
       },
-      body: JSON.stringify({
-        first_name: data.firstName,
-        last_name: data.lastName,
-        email: data.email,
-        phone: data.phone,
-        organization_name: data.organizationName,
-        label_names: data.label_names,
-        typed_custom_fields: {
-          '668c2a9462dd94078939da01': data.message
-        }
-      })
+      body: JSON.stringify(requestBody),
     });
 
-    const textResponse = await apolloResponse.text();
-    console.log("Raw Apollo Response: ", textResponse);
+    const responseData = await response.json();
 
-    // Check if response is valid JSON
-    let jsonResponse;
-    try {
-      jsonResponse = JSON.parse(textResponse);
-    } catch (error) {
-      console.error("Invalid JSON response: ", textResponse);
+    console.log("Raw Apollo Response:", responseData);
+
+    if (!response.ok) {
       return {
-        statusCode: 500,
+        statusCode: response.status,
         headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "Content-Type",
-          "Access-Control-Allow-Methods": "POST"
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
+          'Access-Control-Allow-Headers': 'Content-Type',
         },
-        body: JSON.stringify({ error: "Invalid JSON response from Apollo API" })
-      };
-    }
-
-    console.log("Apollo Response: ", jsonResponse);
-
-    if (!apolloResponse.ok) {
-      return {
-        statusCode: apolloResponse.status,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "Content-Type",
-          "Access-Control-Allow-Methods": "POST"
-        },
-        body: JSON.stringify({ error: jsonResponse })
+        body: JSON.stringify({ error: responseData }),
       };
     }
 
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "POST"
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
+        'Access-Control-Allow-Headers': 'Content-Type',
       },
-      body: JSON.stringify({ success: true, data: jsonResponse })
+      body: JSON.stringify(responseData),
     };
   } catch (error) {
-    console.error("Unexpected error: ", error);
     return {
       statusCode: 500,
       headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "POST"
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
+        'Access-Control-Allow-Headers': 'Content-Type',
       },
-      body: JSON.stringify({ error: error.message })
+      body: JSON.stringify({ error: 'Unexpected error', message: error.message }),
     };
   }
 };
