@@ -1,6 +1,6 @@
-// Change the file name to create-contact.mjs
+// Rename the file to create-contact.mjs
 
-exports.handler = async function(event, context) {
+export async function handler(event, context) {
     const fetch = await import('node-fetch').then(mod => mod.default);
   
     try {
@@ -22,12 +22,15 @@ exports.handler = async function(event, context) {
         headers: {
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache',
-          'X-Api-Key': 'F1ylxgjzNqFcVmrxp7XNWQ'
+          'X-Api-Key': 'kyW8x396g0wn6U2ka72pRA' // Use the new API key
         },
         body: JSON.stringify(contactData)
       });
   
-      const result = await response.json();
+      const text = await response.text();
+      console.log('Raw Apollo Response:', text);
+  
+      const result = JSON.parse(text);
   
       if (response.ok) {
         console.log('Apollo Response:', result);
