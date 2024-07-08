@@ -35,6 +35,11 @@ exports.handler = async (event, context) => {
       console.error("Invalid JSON response: ", textResponse);
       return {
         statusCode: 500,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Methods": "POST"
+        },
         body: JSON.stringify({ error: "Invalid JSON response from Apollo API" })
       };
     }
@@ -44,18 +49,33 @@ exports.handler = async (event, context) => {
     if (!apolloResponse.ok) {
       return {
         statusCode: apolloResponse.status,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Methods": "POST"
+        },
         body: JSON.stringify({ error: jsonResponse })
       };
     }
 
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "POST"
+      },
       body: JSON.stringify({ success: true, data: jsonResponse })
     };
   } catch (error) {
     console.error("Unexpected error: ", error);
     return {
       statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "POST"
+      },
       body: JSON.stringify({ error: error.message })
     };
   }
