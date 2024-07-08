@@ -1,27 +1,7 @@
 const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
-  const deploymentTimestamp = "4:28pm";
-  const executionTimestamp = new Date().toISOString();
-
-  console.log("Deployment Timestamp:", deploymentTimestamp);
-  console.log("Execution Timestamp:", executionTimestamp);
-
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization"
-      }
-    };
-  }
-
   try {
-    console.log("Event headers:", event.headers);
-    console.log("Event body:", event.body);
-
     const { firstName, lastName, email, phone, organizationName, label_names, message } = JSON.parse(event.body);
 
     const contactData = {
@@ -44,10 +24,6 @@ exports.handler = async (event) => {
       "X-Api-Key": apiKey
     };
 
-    console.log("Sending request to Apollo API:", url);
-    console.log("Request headers:", headers);
-    console.log("Request body:", contactData);
-
     const response = await fetch(url, {
       method: "POST",
       headers: headers,
@@ -55,7 +31,9 @@ exports.handler = async (event) => {
     });
 
     const rawResponseText = await response.text();
-    console.log("Raw Apollo Response:", rawResponseText);
+    console.log("Apollo Response:", rawResponseText);
+
+    const data = JSON.parse(rawResponseText);
 
     return {
       statusCode: 200,
@@ -64,10 +42,10 @@ exports.handler = async (event) => {
         "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization"
       },
-      body: JSON.stringify({ success: true, data: rawResponseText })
+      body: JSON.stringify({ success: true, data })
     };
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error:", error.message);
 
     return {
       statusCode: 500,
