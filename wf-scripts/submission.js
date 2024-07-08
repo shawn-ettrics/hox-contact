@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
             "last-name": formData.get('last-name'),
             email: formData.get('email'),
             phone: formData.get('phone'),
-            organization_name: formData.get('organization'), // Updated field
+            "organization_name": formData.get('organization'), // Ensure this matches the correct form field name
             label_names: [labelName]
         };
 
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .then(response => response.json())
         .then(result => {
-            if (result.success) {
+            if (result.contact) {
                 alert("Contact created successfully!");
             } else {
                 alert("Error: " + result.message);

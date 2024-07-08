@@ -17,7 +17,7 @@ exports.handler = async (event, context) => {
         console.log('Event Body:', event.body);
         const fetch = await import('node-fetch').then(mod => mod.default);
 
-        const { "first-name": firstName, "last-name": lastName, email, phone, organization: organizationName, label_names } = JSON.parse(event.body);
+        const { "first-name": firstName, "last-name": lastName, email, phone, "organization_name": organizationName, label_names } = JSON.parse(event.body);
 
         console.log('Parsed Data:', { firstName, lastName, email, phone, organizationName, label_names });
 
@@ -33,7 +33,7 @@ exports.handler = async (event, context) => {
                 last_name: lastName,
                 email,
                 phone,
-                organization_name: organizationName, // Updated field
+                organization_name: organizationName, 
                 label_names
             })
         });
@@ -41,7 +41,6 @@ exports.handler = async (event, context) => {
         const text = await response.text();
         console.log('Raw Apollo Response:', text);
 
-        // Attempt to parse the response as JSON
         const data = JSON.parse(text);
         console.log('Apollo Response:', data);
 
