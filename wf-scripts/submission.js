@@ -5,13 +5,22 @@ document.addEventListener("DOMContentLoaded", function() {
   
       const formData = new FormData(event.target);
   
+      const message = formData.get('message');
+  
+      if (message.length > 280) {
+        const messageField = event.target.querySelector('textarea[name="message"]');
+        messageField.style.border = "2px solid red";
+        alert("Message exceeds 280 characters limit.");
+        return;
+      }
+  
       const data = {
         "first-name": formData.get('first-name'),
         "last-name": formData.get('last-name'),
         email: formData.get('email'),
         phone: formData.get('phone'),
-        organization: formData.get('organization'),
-        message: formData.get('message'),
+        interest: formData.get('interest'),
+        message: message,
         label_names: [labelName]
       };
   
@@ -27,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (result.success) {
           alert("Contact created successfully!");
         } else {
-          alert("Error: " + result.error);
+          alert("Error: " + result.message);
         }
       })
       .catch(error => {
@@ -52,4 +61,5 @@ document.addEventListener("DOMContentLoaded", function() {
         handleFormSubmission(event, "alpha_usage");
       });
     }
-});
+  });
+  
