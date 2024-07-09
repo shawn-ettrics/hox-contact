@@ -50,6 +50,9 @@ exports.handler = async (event) => {
     const rawResponseText = await response.text();
     console.log("Raw Apollo Response:", rawResponseText);
 
+    const parsedResponse = JSON.parse(rawResponseText);
+    console.log("Parsed Apollo Response:", parsedResponse);
+
     return {
       statusCode: 200,
       headers: {
@@ -57,7 +60,7 @@ exports.handler = async (event) => {
         "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization"
       },
-      body: JSON.stringify({ success: true, data: rawResponseText })
+      body: JSON.stringify({ success: true, data: parsedResponse })
     };
   } catch (error) {
     console.error("Error:", error);
