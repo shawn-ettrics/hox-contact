@@ -23,9 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
       })
       .then(response => response.json())
       .then(result => {
-        if (result.success) {
-          alert("Contact created successfully!");
-        } else {
+        if (!result.success) {
           alert("Error: " + result.message);
         }
       })
