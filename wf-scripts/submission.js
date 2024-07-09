@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
   
     function validateMessageLength(event) {
       const messageField = event.target;
-      const submitButton = messageField.closest('form').querySelector('button[type="submit"]');
+      const submitButton = messageField.closest('form').querySelector('input[type="submit"]');
       if (messageField.value.length > 280) {
         messageField.style.border = "2px solid red";
         submitButton.disabled = true;
