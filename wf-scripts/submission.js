@@ -1,18 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Function to handle form submission
     function handleFormSubmission(event, labelName) {
       event.preventDefault();
   
       const formData = new FormData(event.target);
-  
-      const message = formData.get('message');
-  
-      if (message.length > 280) {
-        const messageField = event.target.querySelector('textarea[name="message"]');
-        messageField.style.border = "2px solid red";
-        alert("Message exceeds 280 characters limit.");
-        return;
-      }
   
       const data = {
         "first-name": formData.get('first-name'),
@@ -20,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
         email: formData.get('email'),
         phone: formData.get('phone'),
         interest: formData.get('interest'),
-        message: message,
+        message: formData.get('message'),
         label_names: [labelName]
       };
   
@@ -45,11 +35,26 @@ document.addEventListener("DOMContentLoaded", function() {
       });
     }
   
-    // Get the forms
+    function validateMessageLength(event) {
+      const messageField = event.target;
+      const submitButton = messageField.closest('form').querySelector('button[type="submit"]');
+      if (messageField.value.length > 280) {
+        messageField.style.border = "2px solid red";
+        submitButton.disabled = true;
+      } else {
+        messageField.style.border = "";
+        submitButton.disabled = false;
+      }
+    }
+  
+    const messageFields = document.querySelectorAll('textarea[name="message"]');
+    messageFields.forEach(field => {
+      field.addEventListener('input', validateMessageLength);
+    });
+  
     const investorForm = document.getElementById("wf-form-Investor-inquiry");
     const alphaUsageForm = document.getElementById("wf-form-Alpha-usage");
   
-    // Add event listeners to the forms
     if (investorForm) {
       investorForm.addEventListener("submit", function(event) {
         handleFormSubmission(event, "investor_inquiry");
